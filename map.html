@@ -1,0 +1,163 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Security-Policy" content="default-src *; style-src * 'unsafe-inline'; script-src * 'unsafe-inline' 'unsafe-eval'; img-src * data: 'unsafe-inline'; connect-src * 'unsafe-inline'; frame-src *;">
+		<script type="text/javascript" src="mapwize.js"></script>
+		<script type="text/javascript" src="boot.js"></script>
+		<link rel="stylesheet" href="mapwize.css" />
+		<style>
+            #myMapId {
+                height: 500px;
+            }
+        </style>
+	</head>
+	<body>
+
+		<div id="myMapId"></div>
+
+		<script>
+			var map = Mapwize.map('myMapId', {
+        		apiKey: "0651958e04b00d161ce6b988fa81d762",
+				useBrowserLocation: false,
+				displayMarkerOptions: {
+					iconUrl: 'truck-c1.png',
+					iconSize: [15, 30],
+					iconAnchor: [9, 29]
+				}
+    		}, function (err, mapInstance) {
+		    	// This callback is called when the map is initialized (Or if there is an error during initialization)
+    			    
+	    		if (err) {
+			    	console.error('An error occur during map initialization', err);
+	    		}
+	    		else {
+		    		console.log('map is now loaded');
+	    		}
+				mapInstance.showDirections({"placeId" : '5b702d3337a7040004e2b297'}, {"placeId" : '5b702d8447b14f000434375b'}, null, null, function(err, directions){});
+				mapInstance.centerOnVenue('5b6f09ce6ee06000048f4b29');
+	    	});
+            
+
+			
+            map.setFloor(0);
+		
+
+			var oldmarkerId;
+			var updatePosition = function(coordinates) {
+				if (oldmarkerId) {
+					map.removeMarker(oldmarkerId);
+					oldmarkerId = undefined;
+				}
+				if (coordinates) {
+					map.addMarker({
+						latitude: coordinates[0], 
+						longitude: coordinates[1],
+						floor: 0,
+					}, function (err, markerId) {
+						if (err) {
+							return console.error('addMarker failed', err);
+						}
+						oldmarkerId = markerId;
+					});
+				}
+				
+			}
+
+			// var updatePosition = function(coordinates) {
+
+			// 	if (coordinates) {
+			// 		map.setUserPosition({
+			// 			latitude: coordinates[0], 
+			// 			longitude: coordinates[1],
+			// 			floor: 0,
+			// 			accuracy: 5,
+			// 		});
+			// 	}
+				
+			// }
+			var route = [
+				[12.971301104308122, 80.19681841135026],
+				[12.971316178151845, 80.19685089533115],
+				[12.971336178151845, 80.19685089533115],
+				[12.971356178151845, 80.19685089533115],
+				[12.971376178151845, 80.19685089533115],
+				[12.971396786904005, 80.19685059785844],
+				[12.971416786904005, 80.19685059785844],
+				[12.971436786904005, 80.19685059785844],
+				[12.971452305926385, 80.1968526095152],
+				[12.971474266249572, 80.19681733338834],
+				[12.971474266249572, 80.19677733338834],
+				[12.971474266249572, 80.19674733338834],
+				[12.971474266249572, 80.19670733338834],
+				[12.971474266249572, 80.19667733338834],
+				[12.971474266249572, 80.19663733338834],
+				[12.971474266249572, 80.19659733338834],
+				[12.971474266249572, 80.19656733338834],
+				[12.971474266249572, 80.19653733338834],
+				[12.971474266249572, 80.19651733338834],
+				[12.971502854294346, 80.19651280716062]
+			];
+			var index = 0;
+
+			var interval = setInterval(function(){
+				if (route.length > index){
+					updatePosition(route[index++]);
+				}
+				else {
+					clearInterval(interval);
+					map.stopDirections();
+					updatePosition();
+					secondPickUp();
+				}
+			}, 2000);
+
+
+			function secondPickUp(){
+				var route2 =  [
+					[
+					12.971382784484208,
+					80.1964831352234
+					],
+					[
+					12.97139552658925,
+					80.19648883491756
+					],
+					[
+					12.97139421970671,
+					80.1965729892254
+					],
+					[
+					12.971473932763704,
+					80.19657436982544
+					],
+					[
+					12.971549085239808,
+					80.19657567143443
+					],
+					[
+					12.971548758519376,
+					80.1966454088688
+					],
+					[
+					12.97157391599142,
+					80.1966504380107
+					]
+				];
+				map.showDirections({"placeId" : '5b702e6947b14f0004343765'}, {"placeId" : '5b702e9577be5600044f8fd6'}, null, null, function(err, directions){});
+				index = 0;
+
+				var interval = setInterval(function(){
+					if (route2.length > index){
+						updatePosition(route2[index++]);
+					}
+					else {
+						clearInterval(interval);
+						map.stopDirections();
+						updatePosition();
+					}
+				}, 2000);
+			}
+
+		</script>
+
+	</body>
+</html>
